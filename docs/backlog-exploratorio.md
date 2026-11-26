@@ -48,20 +48,20 @@ Como a **Savano Store** baixa e dispara a instalação de binários `.apk` no ap
 
 ## 4. Arquitetura do "Savano Engineering Playbook" (Replicação por PR)
 
-Inspirado no modelo de **Engineering Playbook** corporativo, o repositório privado `SAVANOo/savano-playbook` pode evoluir para ser a **fonte única da verdade** de regras, skills, templates e agentes, propagando atualizações automaticamente por **Pull Request** para os repositórios conectados (`savano-store`, `vocabulando`, `savano-cine`).
+O repositório privado `SAVANOo/playbook` funciona como a **fonte única da verdade** de regras de engenharia, skills, templates e agentes, propagando atualizações automaticamente por **Pull Request** para os repositórios conectados (`savano-store`, `vocabulando`, `savano-cine`).
 
-### 4.1. Estrutura proposta no `SAVANOo/savano-playbook`
+### 4.1. Estrutura no `SAVANOo/playbook`
 ```text
-savano-playbook/
+playbook/
 ├── .github/
 │   └── workflows/
-│       └── sync-playbook.yml       # Dispara PRs nos repos conectados a cada push na main
+│       └── sync-playbook.yml      # Dispara PRs nos repos conectados a cada push na main
 ├── sync-targets.json              # Lista de repos destino + arquivos sincronizados
 ├── rules/                         # Regras de engenharia e segurança (fonte única)
 │   ├── AGENTS.base.md
 │   ├── security-and-quality.md
 │   └── workflow-kanban.md
-├── skills/                        # Skills reutilizáveis (.claude/skills / antigravity)
+├── skills/                        # Skills reutilizáveis (.claude/skills)
 │   ├── android-release/
 │   ├── security-audit/
 │   └── kanban-grooming/
@@ -71,7 +71,7 @@ savano-playbook/
 ```
 
 ### 4.2. Como funciona a propagação automática por PR
-1. Você edita uma regra em `rules/security-and-quality.md` ou uma skill em `skills/` no `SAVANOo/savano-playbook` e faz `git push` na `main`.
+1. Você edita uma regra em `rules/security-and-quality.md` ou uma skill em `skills/` no `SAVANOo/playbook` e faz `git push` na `main`.
 2. A GitHub Action `sync-playbook.yml` lê `sync-targets.json`:
    ```json
    {
@@ -84,6 +84,6 @@ savano-playbook/
    ```
 3. Para cada repositório da lista (usando um Fine-Grained PAT armazenado em `Secrets -> PLAYBOOK_SYNC_TOKEN` com permissão de `Contents: Read & Write` e `Pull requests: Read & Write`), o workflow:
    - Faz checkout do repositório destino.
-   - Atualiza **apenas** a pasta gerenciada pelo playbook (ex.: `docs/standards/` e `.claude/skills/savano-*`), **sem sobrescrever** arquivos específicos do projeto como `AGENTS.md` local ou `docs/kanban.md`.
-   - Abre (ou atualiza) um Pull Request no branch `chore/sync-savano-playbook` com o diff exato e referência ao commit de origem do `savano-playbook`.
+   - Atualiza **apenas** a pasta gerenciada pelo playbook (ex.: `.savano-playbook/` e `.claude/skills/savano-*`), **sem sobrescrever** arquivos específicos do projeto como `AGENTS.md` local ou `docs/kanban.md`.
+   - Abre (ou atualiza) um Pull Request no branch `chore/sync-savano-playbook` com o diff exato e referência ao commit de origem do `playbook`.
 4. Você (ou o agente na sessão daquele repo) revisa o PR e faz merge em 1 clique — garantindo padronização sem risco de quebrar customizações locais.

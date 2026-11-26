@@ -27,7 +27,7 @@ Roteiro operacional do projeto. Cada entrega é quebrada em cartões pequenos, o
 | `S3-01` | P0 | **Ícone Oficial, Adaptive Icon e Splash Screen** | Assets gerados em Obsidian `#090B0E` + Esmeralda `#10B981` + Dourado `#EAB308` |
 | `S3-02` | P1 | **Busca, Filtros, Feedback & Configs do App** | Busca, filtros (`Todos`, `Atualizações`, `Instalados`), banner pós-instalação e botão `openAppSettings` |
 | `S3-03` | P1 | **Acessibilidade, Galeria & Diagnóstico** | `accessibilityRole`/`accessibilityLabel`, suporte a `screenshots[]` e painel de saúde + histórico na aba Atualizações |
-| `S4-03` | P1 | **Savano Engineering Playbook (`SAVANOo/savano-playbook`) com Sync por PR** | `sync-targets.json`, `skills/` e `.github/workflows/sync-playbook.yml` configurados no repo privado |
+| `S4-03` | P1 | **Savano Engineering Playbook (`SAVANOo/playbook`) com Sync por PR** | `sync-targets.json`, `skills/` e `.github/workflows/sync-playbook.yml` configurados no repo privado |
 | `S4-04` | P2 | **Assinatura RSA-SHA256 do `catalog.json` (`catalog.sig`)** | `scripts/sign-catalog.mjs` + `verifyCatalogSignature` no módulo Kotlin (`SHA256withRSA`) validados em testes |
 
 ### Ciclo 1 — Fundação, Módulo Nativo Kotlin, Segurança Base & Catálogo Real
