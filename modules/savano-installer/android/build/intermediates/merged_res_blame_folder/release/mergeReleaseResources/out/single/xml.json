@@ -1,6 +1,0 @@
-[
-    {
-        "merged": "com.savanostore.installer.savano-installer-release-2:/xml/savano_file_paths.xml",
-        "source": "com.savanostore.installer.savano-installer-main-3:/xml/savano_file_paths.xml"
-    }
-]

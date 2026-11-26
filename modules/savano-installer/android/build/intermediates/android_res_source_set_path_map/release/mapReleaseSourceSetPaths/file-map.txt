@@ -1,9 +1,0 @@
-com.savanostore.installer.savano-installer-pngs-0 C:\Users\savio\Desktop\Geral\Estudos Sávio\Projetos de programação\savano-store\modules\savano-installer\android\build\generated\res\pngs\release
-com.savanostore.installer.savano-installer-updated_navigation_xml-1 C:\Users\savio\Desktop\Geral\Estudos Sávio\Projetos de programação\savano-store\modules\savano-installer\android\build\generated\updated_navigation_xml\release
-com.savanostore.installer.savano-installer-mergeReleaseResources-2 C:\Users\savio\Desktop\Geral\Estudos Sávio\Projetos de programação\savano-store\modules\savano-installer\android\build\intermediates\incremental\release\mergeReleaseResources\merged.dir
-com.savanostore.installer.savano-installer-mergeReleaseResources-3 C:\Users\savio\Desktop\Geral\Estudos Sávio\Projetos de programação\savano-store\modules\savano-installer\android\build\intermediates\incremental\release\mergeReleaseResources\stripped.dir
-com.savanostore.installer.savano-installer-release-4 C:\Users\savio\Desktop\Geral\Estudos Sávio\Projetos de programação\savano-store\modules\savano-installer\android\build\intermediates\merged_res\release\mergeReleaseResources
-com.savanostore.installer.savano-installer-release-5 C:\Users\savio\Desktop\Geral\Estudos Sávio\Projetos de programação\savano-store\modules\savano-installer\android\build\intermediates\packaged_res\release\packageReleaseResources
-com.savanostore.installer.savano-installer-main-6 C:\Users\savio\Desktop\Geral\Estudos Sávio\Projetos de programação\savano-store\modules\savano-installer\android\src\main\res
-com.savanostore.installer.savano-installer-release-7 C:\Users\savio\Desktop\Geral\Estudos Sávio\Projetos de programação\savano-store\modules\savano-installer\android\src\release\res
-gradleHome-0 C:\Users\savio\.gradle
