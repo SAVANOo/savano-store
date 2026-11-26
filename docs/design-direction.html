@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Savano Store — System Design &amp; Direção Visual</title>
+  <style>
+    :root {
+      --bg: #090b0e;
+      --surface: #11151b;
+      --surface-2: #171c24;
+      --border: #232a36;
+      --text: #f4f6f8;
+      --muted: #9aa4b2;
+      --accent: #10b981;
+      --accent-text: #04120b;
+      --accent-soft: rgba(16, 185, 129, 0.14);
+      --gold: #eab308;
+      --gold-text: #141002;
+      --gold-soft: rgba(234, 179, 8, 0.14);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.55;
+      padding: 24px 24px 80px;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+    .wrap { max-width: 1160px; margin: 0 auto; }
+
+    /* Sticky Theme Switcher Bar */
+    .toolbar {
+      position: sticky;
+      top: 12px;
+      z-index: 50;
+      background: color-mix(in srgb, var(--surface) 92%, transparent);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 12px 16px;
+      margin-bottom: 28px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .toolbar-group {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+    }
+    .toolbar-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--muted);
+      margin-right: 4px;
+    }
+    .theme-btn {
+      background: var(--surface-2);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 7px 14px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      transition: all 0.15s ease;
+    }
+    .theme-btn:hover { border-color: var(--accent); }
+    .theme-btn.active {
+      background: var(--accent-soft);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      display: inline-block;
+    }
+
+    header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 24px;
+      margin-bottom: 36px;
+    }
+    .kicker {
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 1.6px;
+      text-transform: uppercase;
+    }
+    h1 { font-size: 34px; margin: 8px 0 10px; letter-spacing: -0.8px; }
+    h2 { font-size: 22px; margin: 44px 0 14px; letter-spacing: -0.3px; }
+    h3 { font-size: 16px; margin: 0 0 8px; }
+    p.lead { color: var(--muted); max-width: 760px; margin: 0; font-size: 15px; }
+
+    .grid { display: grid; gap: 18px; }
+    .grid-2 { grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); }
+    .grid-3 { grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+    .grid-4 { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+      transition: background 0.2s ease, border-color 0.2s ease;
+    }
+    .panel.selectable { cursor: pointer; }
+    .panel.selectable:hover { border-color: var(--accent); }
+    .panel.selectable.active {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px var(--accent);
+    }
+
+    .tag {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      margin-bottom: 10px;
+    }
+    .tag.warn { background: var(--gold-soft); color: var(--gold); }
+
+    .swatches { display: flex; gap: 8px; margin: 14px 0 6px; }
+    .swatch {
+      flex: 1;
+      height: 44px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.08);
+      position: relative;
+    }
+    .swatch span {
+      position: absolute;
+      bottom: 4px;
+      left: 6px;
+      font-size: 10px;
+      font-family: monospace;
+      background: rgba(0,0,0,0.6);
+      padding: 1px 4px;
+      border-radius: 4px;
+      color: #fff;
+    }
+
+    .icon-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 12px;
+    }
+    .icon-preview {
+      width: 96px;
+      height: 96px;
+      border-radius: 24px;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--border);
+      background: var(--bg);
+    }
+
+    /* Live Mobile Mockups */
+    .phone {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      padding: 18px 16px;
+      max-width: 345px;
+      margin: 0 auto;
+    }
+    .phone-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+    .phone-title { font-size: 22px; font-weight: 800; letter-spacing: -0.5px; }
+    .icon-btn {
+      width: 34px;
+      height: 34px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--surface-2);
+      color: var(--text);
+      display: grid;
+      place-items: center;
+      font-size: 15px;
+    }
+    .mock-search {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 9px 12px;
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+    .store-update-alert {
+      background: var(--gold-soft);
+      border: 1px solid var(--gold);
+      border-radius: 14px;
+      padding: 12px;
+      margin-bottom: 12px;
+    }
+    .store-update-alert.hidden { display: none; }
+    .mock-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 14px;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .mock-app-icon {
+      width: 46px;
+      height: 46px;
+      border-radius: 12px;
+      flex-shrink: 0;
+    }
+    .mock-btn {
+      padding: 7px 14px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      border: none;
+      flex-shrink: 0;
+      background: var(--accent);
+      color: var(--accent-text);
+    }
+    .mock-btn.update {
+      background: var(--gold);
+      color: var(--gold-text);
+    }
+    .muted { color: var(--muted); font-size: 13px; }
+    code {
+      background: var(--surface-2);
+      padding: 2px 6px;
+      border-radius: 6px;
+      font-size: 12px;
+      color: var(--accent);
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <!-- Barra interativa para trocar tema em tempo real -->
+    <div class="toolbar">
+      <div class="toolbar-group">
+        <span class="toolbar-label">Tema ao vivo:</span>
+        <button class="theme-btn active" data-theme="obsidian" onclick="applyTheme('obsidian')">
+          <span class="dot" style="background:#10B981"></span> Obsidian &amp; Emerald
+        </button>
+        <button class="theme-btn" data-theme="graphite" onclick="applyTheme('graphite')">
+          <span class="dot" style="background:#F59E0B"></span> Graphite &amp; Amber
+        </button>
+        <button class="theme-btn" data-theme="slate" onclick="applyTheme('slate')">
+          <span class="dot" style="background:#38BDF8"></span> Slate &amp; Cyan
+        </button>
+        <button class="theme-btn" data-theme="ink" onclick="applyTheme('ink')">
+          <span class="dot" style="background:#F8FAFC"></span> Pure Ink &amp; Ivory
+        </button>
+      </div>
+      <div class="toolbar-group">
+        <button class="theme-btn" id="toggleUpdateAlertBtn" onclick="toggleStoreAlert()">
+          Simular Alerta de Update da Loja: ON
+        </button>
+      </div>
+    </div>
+
+    <header>
+      <div class="kicker">Savano Store • System Design Interativo</div>
+      <h1>Exploração Visual, UX &amp; Arquitetura de Segurança</h1>
+      <p class="lead">
+        Clique nos temas da barra acima (ou nos cards de paleta abaixo) para visualizar toda a loja, ícones e mockups trocando de tema em tempo real.
+      </p>
+    </header>
+
+    <h2>1. Decisões de Produto &amp; Segurança</h2>
+    <div class="grid grid-3">
+      <div class="panel">
+        <span class="tag">UX / Vitrine Limpa</span>
+        <h3>Remover jargão técnico da Home</h3>
+        <p class="muted">
+          Na tela inicial, o usuário não precisa ler <em>"Builds assinados com verificação SHA-256..."</em> nem ver <code>app.vocabulando</code> em cada card. Isso fica só na tela de <strong>Detalhes</strong>.
+        </p>
+      </div>
+      <div class="panel">
+        <span class="tag warn">Segurança / Acesso Admin</span>
+        <h3>Ocultar URL editável do Catálogo</h3>
+        <p class="muted">
+          URL fixa em produção (<code>savanoo.github.io</code>) e edição escondida em um <strong>Modo Admin oculto</strong> (5 toques na versão da loja ou apenas em <code>__DEV__</code>).
+        </p>
+      </div>
+      <div class="panel">
+        <span class="tag">Navegação &amp; Auto-Update</span>
+        <h3>Refresh no topo + Alerta de Update da Loja</h3>
+        <p class="muted">
+          Botão <code>↻</code> direto no cabeçalho da Home + card de alerta quando houver nova versão da própria <strong>Savano Store</strong> ("Atualizar agora" ou "Ver no GitHub").
+        </p>
+      </div>
+    </div>
+
+    <h2>2. Paletas (clique para aplicar na página toda)</h2>
+    <div class="grid grid-4">
+      <div class="panel selectable active" data-theme="obsidian" onclick="applyTheme('obsidian')">
+        <span class="tag">Opção A (Atual)</span>
+        <h3>Obsidian &amp; Emerald</h3>
+        <p class="muted">Editorial escuro, técnico e confiável.</p>
+        <div class="swatches">
+          <div class="swatch" style="background:#090B0E"><span>#090B0E</span></div>
+          <div class="swatch" style="background:#11151B"><span>#11151B</span></div>
+          <div class="swatch" style="background:#10B981"><span>#10B981</span></div>
+          <div class="swatch" style="background:#EAB308"><span>#EAB308</span></div>
+        </div>
+      </div>
+
+      <div class="panel selectable" data-theme="graphite" onclick="applyTheme('graphite')">
+        <span class="tag warn">Opção B (Boutique)</span>
+        <h3>Graphite &amp; Amber</h3>
+        <p class="muted">Mais quente e autoral, combina com Savano Cine.</p>
+        <div class="swatches">
+          <div class="swatch" style="background:#0C0C0E"><span>#0C0C0E</span></div>
+          <div class="swatch" style="background:#16161A"><span>#16161A</span></div>
+          <div class="swatch" style="background:#F59E0B"><span>#F59E0B</span></div>
+          <div class="swatch" style="background:#34D399"><span>#34D399</span></div>
+        </div>
+      </div>
+
+      <div class="panel selectable" data-theme="slate" onclick="applyTheme('slate')">
+        <span class="tag" style="background:rgba(56,189,248,0.15);color:#38bdf8">Opção C (Tech)</span>
+        <h3>Slate &amp; Electric Cyan</h3>
+        <p class="muted">Utilitário de sistema moderno e nítido.</p>
+        <div class="swatches">
+          <div class="swatch" style="background:#070B12"><span>#070B12</span></div>
+          <div class="swatch" style="background:#101724"><span>#101724</span></div>
+          <div class="swatch" style="background:#38BDF8"><span>#38BDF8</span></div>
+          <div class="swatch" style="background:#FACC15"><span>#FACC15</span></div>
+        </div>
+      </div>
+
+      <div class="panel selectable" data-theme="ink" onclick="applyTheme('ink')">
+        <span class="tag" style="background:rgba(248,250,252,0.12);color:#f8fafc">Opção D (Studio)</span>
+        <h3>Pure Ink &amp; Ivory</h3>
+        <p class="muted">Preto profundo estilo Nothing/Linear, alto contraste.</p>
+        <div class="swatches">
+          <div class="swatch" style="background:#050506"><span>#050506</span></div>
+          <div class="swatch" style="background:#121215"><span>#121215</span></div>
+          <div class="swatch" style="background:#F8FAFC"><span>#F8FAFC</span></div>
+          <div class="swatch" style="background:#22C55E"><span>#22C55E</span></div>
+        </div>
+      </div>
+    </div>
+
+    <h2>3. Variações de Ícone (reagem ao tema selecionado)</h2>
+    <div class="grid grid-4">
+      <div class="panel icon-box">
+        <div class="icon-preview">
+          <svg width="56" height="56" viewBox="0 0 64 64" fill="none">
+            <rect x="10" y="10" width="44" height="44" rx="14" stroke="var(--border)" stroke-width="2.5"/>
+            <path d="M40 20H26C22.686 20 20 22.686 20 26C20 29.314 22.686 32 26 32H38C41.314 32 44 34.686 44 38C44 41.314 41.314 44 38 44H24" stroke="var(--accent)" stroke-width="5" stroke-linecap="round"/>
+            <circle cx="45" cy="19" r="4" fill="var(--gold)"/>
+          </svg>
+        </div>
+        <h3>1. Monograma "S" Fluido</h3>
+        <p class="muted">Minimalista com ponto de novidade.</p>
+      </div>
+
+      <div class="panel icon-box">
+        <div class="icon-preview">
+          <svg width="56" height="56" viewBox="0 0 64 64" fill="none">
+            <path d="M32 8L52 16V30C52 43 43.5 52.5 32 56C20.5 52.5 12 43 12 30V16L32 8Z" fill="var(--surface)" stroke="var(--accent)" stroke-width="3"/>
+            <path d="M32 22V38M32 38L25 31M32 38L39 31" stroke="var(--text)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <h3>2. Escudo + Download</h3>
+        <p class="muted">Comunica instalação verificada.</p>
+      </div>
+
+      <div class="panel icon-box">
+        <div class="icon-preview">
+          <svg width="56" height="56" viewBox="0 0 64 64" fill="none">
+            <rect x="14" y="18" width="36" height="34" rx="8" fill="var(--accent)"/>
+            <path d="M24 18V15C24 10.582 27.582 7 32 7C36.418 7 40 10.582 40 15V18" stroke="var(--gold)" stroke-width="3.5" stroke-linecap="round"/>
+            <path d="M32 28V41M32 41L26 35M32 41L38 35" stroke="var(--accent-text)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <h3>3. Sacola Editorial</h3>
+        <p class="muted">Clássico de loja de aplicativos.</p>
+      </div>
+
+      <div class="panel icon-box">
+        <div class="icon-preview">
+          <svg width="56" height="56" viewBox="0 0 64 64" fill="none">
+            <polygon points="32,8 54,21 54,43 32,56 10,43 10,21" stroke="var(--text)" stroke-width="3" fill="var(--surface)"/>
+            <polygon points="32,18 44,25 44,39 32,46 20,39 20,25" fill="var(--accent)"/>
+          </svg>
+        </div>
+        <h3>4. Prisma / Cofre Hex</h3>
+        <p class="muted">Geométrico de alto contraste.</p>
+      </div>
+    </div>
+
+    <h2>4. Simulação da Tela Inicial (reage ao tema selecionado)</h2>
+    <div class="grid grid-2">
+      <div class="panel">
+        <span class="tag">Proposta 1 — Compacta &amp; Limpa</span>
+        <p class="muted" style="margin-bottom:16px">
+          Sem jargão técnico, sem <code>packageId</code> no card, com refresh <code>↻</code> no topo e alerta de atualização da própria loja.
+        </p>
+        <div class="phone">
+          <div class="phone-top">
+            <div>
+              <div style="font-size:10px;color:var(--accent);font-weight:700;letter-spacing:1.2px">SAVANO</div>
+              <div class="phone-title">Meus Apps</div>
+            </div>
+            <div class="icon-btn" title="Sincronizar">↻</div>
+          </div>
+
+          <div class="store-update-alert" id="alert1">
+            <div style="font-size:12px;font-weight:700;color:var(--gold)">Nova Savano Store v1.1.0 disponível</div>
+            <div style="font-size:11px;color:var(--text);margin:4px 0 8px">• Novo layout editorial + checagem em background</div>
+            <div style="display:flex;gap:8px;align-items:center">
+              <button class="mock-btn update">Atualizar agora</button>
+              <span style="font-size:11px;color:var(--muted);text-decoration:underline">Ver no GitHub</span>
+            </div>
+          </div>
+
+          <div class="mock-search">Buscar aplicativo...</div>
+          <div class="mock-card">
+            <div class="mock-app-icon" style="background:#f3f4f6;display:grid;place-items:center;color:#065f46;font-weight:900">V</div>
+            <div style="flex:1;min-width:0">
+              <div style="font-weight:700;font-size:14px">Vocabulando</div>
+              <div style="font-size:11px;color:var(--muted)">v1.0.0 • 26.1 MB</div>
+            </div>
+            <button class="mock-btn">Instalar</button>
+          </div>
+          <div class="mock-card" style="border-color:var(--gold)">
+            <div class="mock-app-icon" style="background:#d97706;display:grid;place-items:center;color:#fff;font-weight:900">S</div>
+            <div style="flex:1;min-width:0">
+              <div style="font-weight:700;font-size:14px">Savano Cine</div>
+              <div style="font-size:11px;color:var(--gold)">v1.0.0 → v1.1.0 • 1.6 MB</div>
+            </div>
+            <button class="mock-btn update">Atualizar</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <span class="tag warn">Proposta 2 — Editorial com Tagline</span>
+        <p class="muted" style="margin-bottom:16px">
+          Mantém a frase curta de cada app no card, mas sem poluição técnica.
+        </p>
+        <div class="phone">
+          <div class="phone-top">
+            <div class="phone-title">Savano Store</div>
+            <div style="display:flex;gap:8px;align-items:center">
+              <span style="font-size:11px;color:var(--accent);font-weight:600">Online</span>
+              <div class="icon-btn">↻</div>
+            </div>
+          </div>
+          <div class="mock-search">Buscar aplicativo ou categoria...</div>
+          <div class="mock-card" style="flex-direction:column;align-items:stretch;gap:10px">
+            <div style="display:flex;gap:12px;align-items:center">
+              <div class="mock-app-icon" style="background:#f3f4f6;display:grid;place-items:center;color:#065f46;font-weight:900">V</div>
+              <div style="flex:1">
+                <div style="font-weight:700;font-size:14px">Vocabulando</div>
+                <div style="font-size:11px;color:var(--muted)">Baralho diário PT-BR offline</div>
+              </div>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <span style="font-size:11px;color:var(--muted)">Educação • v1.0.0 • 26.1 MB</span>
+              <button class="mock-btn">Instalar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const THEMES = {
+      obsidian: {
+        '--bg': '#090b0e',
+        '--surface': '#11151b',
+        '--surface-2': '#171c24',
+        '--border': '#232a36',
+        '--text': '#f4f6f8',
+        '--muted': '#9aa4b2',
+        '--accent': '#10b981',
+        '--accent-text': '#04120b',
+        '--accent-soft': 'rgba(16, 185, 129, 0.14)',
+        '--gold': '#eab308',
+        '--gold-text': '#141002',
+        '--gold-soft': 'rgba(234, 179, 8, 0.14)',
+      },
+      graphite: {
+        '--bg': '#0c0c0e',
+        '--surface': '#16161a',
+        '--surface-2': '#1f1f25',
+        '--border': '#2b2b33',
+        '--text': '#f5f5f7',
+        '--muted': '#a1a1aa',
+        '--accent': '#f59e0b',
+        '--accent-text': '#1a1102',
+        '--accent-soft': 'rgba(245, 158, 11, 0.16)',
+        '--gold': '#34d399',
+        '--gold-text': '#03150d',
+        '--gold-soft': 'rgba(52, 211, 153, 0.15)',
+      },
+      slate: {
+        '--bg': '#070b12',
+        '--surface': '#101724',
+        '--surface-2': '#172133',
+        '--border': '#24324a',
+        '--text': '#f1f5f9',
+        '--muted': '#94a3b8',
+        '--accent': '#38bdf8',
+        '--accent-text': '#04141f',
+        '--accent-soft': 'rgba(56, 189, 248, 0.15)',
+        '--gold': '#facc15',
+        '--gold-text': '#161202',
+        '--gold-soft': 'rgba(250, 204, 21, 0.14)',
+      },
+      ink: {
+        '--bg': '#050506',
+        '--surface': '#121215',
+        '--surface-2': '#1b1b20',
+        '--border': '#292930',
+        '--text': '#f8fafc',
+        '--muted': '#9ca3af',
+        '--accent': '#f8fafc',
+        '--accent-text': '#09090b',
+        '--accent-soft': 'rgba(248, 250, 252, 0.14)',
+        '--gold': '#22c55e',
+        '--gold-text': '#031409',
+        '--gold-soft': 'rgba(34, 197, 94, 0.15)',
+      },
+    };
+
+    function applyTheme(name) {
+      const vars = THEMES[name];
+      if (!vars) return;
+      const root = document.documentElement;
+      for (const [k, v] of Object.entries(vars)) {
+        root.style.setProperty(k, v);
+      }
+      document.querySelectorAll('[data-theme]').forEach((el) => {
+        el.classList.toggle('active', el.getAttribute('data-theme') === name);
+      });
+    }
+
+    let showAlert = true;
+    function toggleStoreAlert() {
+      showAlert = !showAlert;
+      document.getElementById('alert1').classList.toggle('hidden', !showAlert);
+      document.getElementById('toggleUpdateAlertBtn').textContent =
+        'Simular Alerta de Update da Loja: ' + (showAlert ? 'ON' : 'OFF');
+    }
+  </script>
+</body>
+</html>
