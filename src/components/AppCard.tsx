@@ -28,6 +28,8 @@ export function AppCard({
   return (
     <Pressable
       onPress={onPressCard}
+      accessibilityRole="button"
+      accessibilityLabel={`${app.name}, versão ${app.versionName}, ${formatBytes(app.sizeBytes)}`}
       style={({ pressed }) => [
         styles.card,
         isUpdate && styles.cardHighlight,

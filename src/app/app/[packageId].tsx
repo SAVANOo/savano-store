@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
+import { openAppSettings } from '../../../modules/savano-installer';
 import { AppActionButton } from '../../components/AppActionButton';
 import { AppIcon } from '../../components/AppIcon';
 import { useStore } from '../../context/StoreContext';
@@ -54,6 +55,27 @@ export default function AppDetailScreen() {
         onPress={() => void triggerAppAction(app)}
         fullWidth
       />
+
+      {installed?.installed ? (
+        <Pressable
+          onPress={() => {
+            openAppSettings(app.packageId);
+          }}
+          accessibilityRole="button"
+          accessibilityLabel={`Abrir configurações do Android para ${app.name}`}
+          style={styles.secondaryBtn}
+        >
+          <Text style={styles.secondaryBtnText}>Configurações / Desinstalar no Android</Text>
+        </Pressable>
+      ) : null}
+
+      {app.screenshots && app.screenshots.length > 0 ? (
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.screenshotsRow}>
+          {app.screenshots.map((uri, idx) => (
+            <Image key={`${idx}-${uri}`} source={{ uri }} style={styles.screenshot} resizeMode="cover" />
+          ))}
+        </ScrollView>
+      ) : null}
 
       <View style={styles.metricsGrid}>
         <View style={styles.metricBox}>
@@ -118,8 +140,16 @@ export default function AppDetailScreen() {
         <Text style={styles.hashValue} selectable>
           {showFullHash ? app.sha256 : shortSha256(app.sha256)}
         </Text>
+        {app.signerSha256 ? (
+          <View style={styles.signerWrap}>
+            <Text style={styles.metricLabel}>CERTIFICADO DE ASSINATURA (SIGNER SHA-256)</Text>
+            <Text style={styles.hashValue} selectable>
+              {showFullHash ? app.signerSha256 : shortSha256(app.signerSha256)}
+            </Text>
+          </View>
+        ) : null}
         <Text style={styles.mutedText}>
-          Validado automaticamente pelo módulo nativo antes de iniciar o instalador do Android.
+          Validado automaticamente pelo módulo nativo (SHA-256 + manifesto + certificado) antes de iniciar o instalador do Android.
         </Text>
       </Pressable>
     </ScrollView>
@@ -277,5 +307,33 @@ const styles = StyleSheet.create({
     color: colors.textMuted,
     fontSize: 12,
     lineHeight: 17,
+  },
+  secondaryBtn: {
+    backgroundColor: colors.surface,
+    borderWidth: 1,
+    borderColor: colors.borderStrong,
+    borderRadius: radii.pill,
+    paddingVertical: 10,
+    alignItems: 'center',
+  },
+  secondaryBtnText: {
+    color: colors.textSecondary,
+    fontSize: 12,
+    fontWeight: '600',
+  },
+  screenshotsRow: {
+    gap: spacing.sm,
+  },
+  screenshot: {
+    width: 180,
+    height: 320,
+    borderRadius: radii.md,
+    borderWidth: 1,
+    borderColor: colors.border,
+    backgroundColor: colors.surface,
+  },
+  signerWrap: {
+    gap: 4,
+    marginTop: 4,
   },
 });

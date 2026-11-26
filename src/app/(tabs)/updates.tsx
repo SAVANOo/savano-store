@@ -26,6 +26,8 @@ export default function UpdatesAndConfigScreen() {
     syncError,
     canInstallPackages,
     cacheStats,
+    deviceCapabilities,
+    installHistory,
     nativeAvailable,
     refreshAll,
     triggerAppAction,
@@ -184,6 +186,30 @@ export default function UpdatesAndConfigScreen() {
             </Pressable>
           </View>
         </View>
+
+        <View style={styles.card}>
+          <Text style={styles.cardTitle}>Saúde & Diagnóstico</Text>
+          <Text style={styles.cardSub}>
+            SDK Android: {deviceCapabilities.sdkInt > 0 ? `API ${deviceCapabilities.sdkInt}` : 'Web / Expo Go'}
+          </Text>
+          <Text style={styles.cardSub}>
+            ABIs: {deviceCapabilities.supportedAbis.length > 0 ? deviceCapabilities.supportedAbis.join(', ') : 'N/A'}
+          </Text>
+          <Text style={styles.cardSub}>
+            Fontes desconhecidas: {nativeAvailable ? (canInstallPackages ? 'Liberado' : 'Pendente') : 'Indisponível'}
+          </Text>
+        </View>
+
+        {installHistory.length > 0 ? (
+          <View style={styles.card}>
+            <Text style={styles.cardTitle}>Histórico de Instalações ({installHistory.length})</Text>
+            {installHistory.slice(0, 5).map((item, idx) => (
+              <Text key={`${item.packageId}-${item.installedAt}-${idx}`} style={styles.cardSub}>
+                • {item.name} v{item.versionName} ({item.versionCode})
+              </Text>
+            ))}
+          </View>
+        ) : null}
       </ScrollView>
     </SafeAreaView>
   );

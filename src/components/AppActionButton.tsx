@@ -79,6 +79,8 @@ export function AppActionButton({
   return (
     <Pressable
       onPress={onPress}
+      accessibilityRole="button"
+      accessibilityLabel={`${label} ${app.name}`}
       style={({ pressed }) => [
         styles.baseBtn,
         variantStyle,

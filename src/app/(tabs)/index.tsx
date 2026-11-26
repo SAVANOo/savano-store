@@ -1,9 +1,11 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import {
+  Pressable,
   RefreshControl,
   ScrollView,
   StyleSheet,
   Text,
+  TextInput,
   View,
 } from 'react-native';
 import { useRouter } from 'expo-router';
@@ -13,6 +15,8 @@ import { useStore } from '../../context/StoreContext';
 import { colors, radii, spacing } from '../../theme/tokens';
 import { computeAppStatus, formatShortDate } from '../../utils/format';
 
+type FilterMode = 'all' | 'updates' | 'installed';
+
 export default function ExploreScreen() {
   const router = useRouter();
   const {
@@ -21,17 +25,38 @@ export default function ExploreScreen() {
     downloads,
     isRefreshing,
     isOfflineFallback,
+    syncError,
     lastSyncedAt,
+    lastInstallBanner,
+    dismissInstallBanner,
     refreshAll,
     triggerAppAction,
   } = useStore();
 
-  const { pendingUpdates, otherApps } = useMemo(() => {
+  const [query, setQuery] = useState('');
+  const [filterMode, setFilterMode] = useState<FilterMode>('all');
+
+  const filteredApps = useMemo(() => {
     const apps = catalog?.apps ?? [];
+    const q = query.trim().toLowerCase();
+
+    return apps.filter((app) => {
+      const status = computeAppStatus(app, installedMap[app.packageId]);
+      if (filterMode === 'updates' && status !== 'update_available') return false;
+      if (filterMode === 'installed' && status === 'not_installed') return false;
+      if (!q) return true;
+      return (
+        app.name.toLowerCase().includes(q) ||
+        app.packageId.toLowerCase().includes(q) ||
+        (app.category ?? '').toLowerCase().includes(q)
+      );
+    });
+  }, [catalog, filterMode, installedMap, query]);
+
+  const { pendingUpdates, otherApps } = useMemo(() => {
     const updates = [];
     const rest = [];
-
-    for (const app of apps) {
+    for (const app of filteredApps) {
       const status = computeAppStatus(app, installedMap[app.packageId]);
       if (status === 'update_available') {
         updates.push(app);
@@ -40,7 +65,7 @@ export default function ExploreScreen() {
       }
     }
     return { pendingUpdates: updates, otherApps: rest };
-  }, [catalog, installedMap]);
+  }, [filteredApps, installedMap]);
 
   return (
     <SafeAreaView style={styles.safeArea} edges={['top']}>
@@ -76,8 +101,71 @@ export default function ExploreScreen() {
           </View>
           <Text style={styles.title}>Savano Store</Text>
           <Text style={styles.subtitle}>
-            Builds assinados com verificação SHA-256 antes de cada instalação.
+            Builds assinados com verificação SHA-256 e certificado antes da instalação.
           </Text>
+        </View>
+
+        {lastInstallBanner ? (
+          <View style={styles.successBanner}>
+            <Text style={styles.successBannerText}>{lastInstallBanner}</Text>
+            <Pressable
+              onPress={dismissInstallBanner}
+              accessibilityRole="button"
+              accessibilityLabel="Fechar aviso de instalação"
+            >
+              <Text style={styles.dismissText}>OK</Text>
+            </Pressable>
+          </View>
+        ) : null}
+
+        {syncError ? (
+          <View style={styles.errorBanner}>
+            <Text style={styles.errorBannerText} numberOfLines={2}>
+              Offline ou erro de rede: {syncError}
+            </Text>
+            <Pressable
+              onPress={() => void refreshAll()}
+              accessibilityRole="button"
+              accessibilityLabel="Tentar sincronizar catálogo novamente"
+            >
+              <Text style={styles.retryText}>Tentar</Text>
+            </Pressable>
+          </View>
+        ) : null}
+
+        <View style={styles.controlsWrap}>
+          <TextInput
+            value={query}
+            onChangeText={setQuery}
+            placeholder="Buscar app, pacote ou categoria..."
+            placeholderTextColor={colors.textMuted}
+            accessibilityLabel="Buscar aplicativos no catálogo"
+            style={styles.searchInput}
+          />
+          <View style={styles.chipsRow}>
+            {(
+              [
+                { id: 'all', label: 'Todos' },
+                { id: 'updates', label: 'Atualizações' },
+                { id: 'installed', label: 'Instalados' },
+              ] as const
+            ).map((chip) => {
+              const active = filterMode === chip.id;
+              return (
+                <Pressable
+                  key={chip.id}
+                  onPress={() => setFilterMode(chip.id)}
+                  accessibilityRole="button"
+                  accessibilityState={{ selected: active }}
+                  style={[styles.filterChip, active && styles.filterChipActive]}
+                >
+                  <Text style={[styles.filterChipText, active && styles.filterChipTextActive]}>
+                    {chip.label}
+                  </Text>
+                </Pressable>
+              );
+            })}
+          </View>
         </View>
 
         {pendingUpdates.length > 0 ? (
@@ -112,9 +200,9 @@ export default function ExploreScreen() {
 
           {otherApps.length === 0 && pendingUpdates.length === 0 ? (
             <View style={styles.emptyBox}>
-              <Text style={styles.emptyTitle}>Nenhum aplicativo no catálogo</Text>
+              <Text style={styles.emptyTitle}>Nenhum aplicativo encontrado</Text>
               <Text style={styles.emptySub}>
-                Puxe para atualizar ou configure a URL do catalog.json na aba Atualizações.
+                Ajuste o filtro/busca ou puxe para sincronizar o catalog.json.
               </Text>
             </View>
           ) : (
@@ -144,7 +232,7 @@ const styles = StyleSheet.create({
   },
   container: {
     padding: spacing.lg,
-    gap: spacing.xl,
+    gap: spacing.lg,
     paddingBottom: spacing.xxl,
   },
   header: {
@@ -195,6 +283,88 @@ const styles = StyleSheet.create({
     color: colors.textSecondary,
     fontSize: 14,
     lineHeight: 20,
+  },
+  successBanner: {
+    backgroundColor: colors.emeraldMuted,
+    borderWidth: 1,
+    borderColor: colors.emeraldDeep,
+    borderRadius: radii.md,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: spacing.md,
+  },
+  successBannerText: {
+    color: colors.emerald,
+    fontSize: 13,
+    fontWeight: '600',
+    flex: 1,
+  },
+  dismissText: {
+    color: colors.textPrimary,
+    fontSize: 12,
+    fontWeight: '700',
+  },
+  errorBanner: {
+    backgroundColor: colors.dangerMuted,
+    borderWidth: 1,
+    borderColor: colors.danger,
+    borderRadius: radii.md,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: spacing.md,
+  },
+  errorBannerText: {
+    color: colors.textPrimary,
+    fontSize: 12,
+    flex: 1,
+  },
+  retryText: {
+    color: colors.danger,
+    fontSize: 12,
+    fontWeight: '700',
+  },
+  controlsWrap: {
+    gap: spacing.sm,
+  },
+  searchInput: {
+    backgroundColor: colors.surface,
+    borderWidth: 1,
+    borderColor: colors.borderStrong,
+    borderRadius: radii.md,
+    paddingHorizontal: spacing.md,
+    paddingVertical: 10,
+    color: colors.textPrimary,
+    fontSize: 14,
+  },
+  chipsRow: {
+    flexDirection: 'row',
+    gap: spacing.sm,
+  },
+  filterChip: {
+    backgroundColor: colors.surface,
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: radii.pill,
+    paddingHorizontal: spacing.md,
+    paddingVertical: 6,
+  },
+  filterChipActive: {
+    backgroundColor: colors.emeraldMuted,
+    borderColor: colors.emerald,
+  },
+  filterChipText: {
+    color: colors.textSecondary,
+    fontSize: 12,
+    fontWeight: '600',
+  },
+  filterChipTextActive: {
+    color: colors.emerald,
   },
   section: {
     gap: spacing.md,
