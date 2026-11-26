@@ -112,17 +112,17 @@ const styles = StyleSheet.create({
     transform: [{ scale: 0.985 }],
   },
   installBtn: {
-    backgroundColor: colors.emerald,
+    backgroundColor: colors.ivory,
   },
   installText: {
-    color: '#04120B',
+    color: '#050506',
     fontWeight: '700',
   },
   updateBtn: {
-    backgroundColor: colors.gold,
+    backgroundColor: colors.emerald,
   },
   updateText: {
-    color: '#141002',
+    color: '#031409',
     fontWeight: '700',
   },
   openBtn: {

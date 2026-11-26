@@ -1,24 +1,26 @@
 export const colors = {
-  // Obsidian base surfaces
-  bg: '#090B0E',
-  surface: '#11151B',
-  surfaceElevated: '#171C24',
-  surfaceHighlight: '#1E2530',
-  border: '#232A36',
-  borderStrong: '#303949',
+  // Pure Ink & Ivory (Studio) base surfaces
+  bg: '#050506',
+  surface: '#121215',
+  surfaceElevated: '#18181D',
+  surfaceHighlight: '#1E1E24',
+  border: '#232329',
+  borderStrong: '#2E2E36',
 
-  // Editorial accents: Emerald & Gold
-  emerald: '#10B981',
-  emeraldDeep: '#059669',
-  emeraldMuted: 'rgba(16, 185, 129, 0.14)',
-  gold: '#EAB308',
-  goldSoft: '#FACC15',
-  goldMuted: 'rgba(234, 179, 8, 0.14)',
+  // Studio accents: Ivory & Vibrant Green
+  ivory: '#F8FAFC',
+  ivoryMuted: 'rgba(248, 250, 252, 0.12)',
+  emerald: '#22C55E',
+  emeraldDeep: '#16A34A',
+  emeraldMuted: 'rgba(34, 197, 94, 0.14)',
+  gold: '#22C55E',
+  goldSoft: '#4ADE80',
+  goldMuted: 'rgba(34, 197, 94, 0.14)',
 
   // Text hierarchy
-  textPrimary: '#F4F6F8',
-  textSecondary: '#A1AAB8',
-  textMuted: '#6B7484',
+  textPrimary: '#F8FAFC',
+  textSecondary: '#A1A1AA',
+  textMuted: '#71717A',
 
   // Semantic
   danger: '#EF4444',

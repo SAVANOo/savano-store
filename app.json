@@ -7,7 +7,7 @@
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "dark",
-    "backgroundColor": "#090B0E",
+    "backgroundColor": "#050506",
     "ios": {
       "supportsTablet": true
     },
@@ -15,7 +15,7 @@
       "package": "com.savanostore.app",
       "versionCode": 1,
       "adaptiveIcon": {
-        "backgroundColor": "#090B0E",
+        "backgroundColor": "#050506",
         "foregroundImage": "./assets/android-icon-foreground.png",
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"

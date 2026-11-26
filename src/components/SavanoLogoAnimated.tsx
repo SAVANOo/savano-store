@@ -50,29 +50,29 @@ export function SavanoLogoAnimated({ size = 38, spinning = false }: SavanoLogoAn
       <Svg width={size} height={size} viewBox="0 0 64 64" fill="none">
         <Polygon
           points="32,10 51,20 32,30 13,20"
-          fill={colors.emerald}
+          fill={colors.ivory}
           stroke={colors.bg}
           strokeWidth={1.5}
           strokeLinejoin="round"
         />
         <Polygon
           points="13,20 32,30 32,52 13,42"
-          fill="#18202B"
-          stroke="#2D394B"
+          fill="#18181D"
+          stroke={colors.borderStrong}
           strokeWidth={1.5}
           strokeLinejoin="round"
         />
         <Polygon
           points="51,20 32,30 32,52 51,42"
           fill={colors.surface}
-          stroke="#2D394B"
+          stroke={colors.borderStrong}
           strokeWidth={1.5}
           strokeLinejoin="round"
         />
-        {/* Fita dourada lacrando tampa e lateral */}
+        {/* Fita verde lacrando tampa e lateral */}
         <Path
           d="M22.5 15L41.5 25V38"
-          stroke={colors.gold}
+          stroke={colors.emerald}
           strokeWidth={3.2}
           strokeLinecap="round"
           strokeLinejoin="round"
@@ -80,7 +80,7 @@ export function SavanoLogoAnimated({ size = 38, spinning = false }: SavanoLogoAn
         {/* S limpo na face esquerda */}
         <Path
           d="M26 30L19 26.5V31.5L26 35V40L19 36.5"
-          stroke={colors.textPrimary}
+          stroke={colors.ivory}
           strokeWidth={2.4}
           strokeLinecap="round"
           strokeLinejoin="round"

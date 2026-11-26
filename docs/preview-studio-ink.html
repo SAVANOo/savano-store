@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Savano Store — Demonstrativo Opção D (Studio: Pure Ink &amp; Ivory)</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, sans-serif;
+      background: #050506;
+      color: #f8fafc;
+      padding: 36px 24px 80px;
+    }
+    .wrap { max-width: 1120px; margin: 0 auto; }
+    .kicker {
+      color: #22c55e;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.6px;
+      text-transform: uppercase;
+    }
+    h1 { font-size: 32px; margin: 8px 0 8px; letter-spacing: -0.7px; }
+    p.lead { color: #9ca3af; max-width: 740px; margin: 0 0 32px; font-size: 15px; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
+      gap: 28px;
+      align-items: start;
+    }
+    .col-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+    .badge {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid #292930;
+      background: #121215;
+      color: #f8fafc;
+    }
+    .badge.studio {
+      background: rgba(248, 250, 252, 0.12);
+      border-color: #f8fafc;
+      color: #f8fafc;
+    }
+
+    /* Phone frame */
+    .phone {
+      border-radius: 34px;
+      padding: 20px 16px 14px;
+      border: 1px solid #292930;
+      max-width: 360px;
+      margin: 0 auto;
+      box-shadow: 0 24px 60px rgba(0,0,0,0.65);
+    }
+    .phone.current { background: #090b0e; border-color: #232a36; }
+    .phone.studio { background: #050506; border-color: #26262c; }
+
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+    .brand { display: flex; align-items: center; gap: 12px; }
+    .brand-kicker { font-size: 10px; font-weight: 700; letter-spacing: 1.5px; }
+    .brand-title { font-size: 22px; font-weight: 800; letter-spacing: -0.5px; }
+    .actions { display: flex; align-items: center; gap: 8px; }
+    .dot { width: 8px; height: 8px; border-radius: 999px; }
+    .refresh {
+      width: 36px; height: 36px; border-radius: 999px;
+      display: grid; place-items: center; font-size: 16px;
+    }
+
+    .search {
+      border-radius: 12px;
+      padding: 10px 12px;
+      font-size: 13px;
+      margin-bottom: 10px;
+    }
+    .chips { display: flex; gap: 8px; margin-bottom: 18px; }
+    .chip {
+      border-radius: 999px;
+      padding: 6px 12px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .sec-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .sec-title { font-size: 15px; font-weight: 700; }
+    .sec-date { font-size: 11px; color: #6b7280; }
+
+    .card {
+      border-radius: 16px;
+      padding: 14px;
+      margin-bottom: 12px;
+    }
+    .card-top { display: flex; gap: 12px; align-items: flex-start; margin-bottom: 12px; }
+    .app-icon {
+      width: 52px; height: 52px; border-radius: 14px;
+      display: grid; place-items: center; font-weight: 800; font-size: 20px; flex-shrink: 0;
+    }
+    .app-name { font-size: 16px; font-weight: 700; margin-bottom: 3px; }
+    .app-tag { font-size: 12px; line-height: 1.4; }
+    .card-foot {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 10px;
+    }
+    .meta { font-size: 11px; }
+    .btn {
+      border-radius: 999px;
+      padding: 8px 16px;
+      font-size: 12px;
+      font-weight: 700;
+      border: none;
+    }
+    .tabs {
+      display: flex;
+      justify-content: space-around;
+      padding-top: 12px;
+      margin-top: 8px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    /* Palette comparison notes */
+    .palette-bar {
+      display: flex;
+      gap: 8px;
+      margin-top: 14px;
+      justify-content: center;
+    }
+    .sw {
+      padding: 4px 8px;
+      border-radius: 8px;
+      font-family: monospace;
+      font-size: 11px;
+      border: 1px solid #292930;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="kicker">Pré-visualização Antes de Aplicar</div>
+    <h1>Atual (Obsidian &amp; Emerald) vs Opção D (Studio: Pure Ink &amp; Ivory)</h1>
+    <p class="lead">
+      Comparativo fiel da tela atual com a <strong>Opção D (Pure Ink &amp; Ivory)</strong>: preto profundo <code>#050506</code>, superfícies <code>#121215</code>, alto contraste <code>#F8FAFC</code> e verde vivo <code>#22C55E</code> nos status/novidades.
+    </p>
+
+    <div class="grid">
+      <!-- ATUAL -->
+      <div>
+        <div class="col-title">
+          <strong>Atual — Obsidian &amp; Emerald</strong>
+          <span class="badge">Em uso agora</span>
+        </div>
+        <div class="phone current">
+          <div class="header">
+            <div class="brand">
+              <svg width="38" height="38" viewBox="0 0 64 64" fill="none">
+                <polygon points="32,10 51,20 32,30 13,20" fill="#10B981" stroke="#090B0E" stroke-width="1.5"/>
+                <polygon points="13,20 32,30 32,52 13,42" fill="#18202B" stroke="#2D394B" stroke-width="1.5"/>
+                <polygon points="51,20 32,30 32,52 51,42" fill="#11151B" stroke="#2D394B" stroke-width="1.5"/>
+                <path d="M22.5 15L41.5 25V38" stroke="#EAB308" stroke-width="3.2" stroke-linecap="round"/>
+                <path d="M26 30L19 26.5V31.5L26 35V40L19 36.5" stroke="#F4F6F8" stroke-width="2.4" stroke-linecap="round"/>
+              </svg>
+              <div>
+                <div class="brand-kicker" style="color:#10B981">SAVANO</div>
+                <div class="brand-title">Savano Store</div>
+              </div>
+            </div>
+            <div class="actions">
+              <div class="dot" style="background:#10B981"></div>
+              <div class="refresh" style="background:#11151B;border:1px solid #303949">↻</div>
+            </div>
+          </div>
+
+          <div class="search" style="background:#11151B;border:1px solid #303949;color:#6B7484">Buscar aplicativo ou categoria...</div>
+          <div class="chips">
+            <span class="chip" style="background:rgba(16,185,129,0.14);border:1px solid #10B981;color:#10B981">Todos</span>
+            <span class="chip" style="background:#11151B;border:1px solid #232A36;color:#A1AAB8">Atualizações</span>
+            <span class="chip" style="background:#11151B;border:1px solid #232A36;color:#A1AAB8">Instalados</span>
+          </div>
+
+          <div class="sec-row">
+            <span class="sec-title">Catálogo</span>
+            <span class="sec-date">26 de nov. de 2026</span>
+          </div>
+
+          <div class="card" style="background:#11151B;border:1px solid #232A36">
+            <div class="card-top">
+              <div class="app-icon" style="background:#f3f4f6;color:#065f46">V</div>
+              <div>
+                <div class="app-name">Vocabulando</div>
+                <div class="app-tag" style="color:#A1AAB8">Baralho diário de vocabulário PT-BR, áudio nativo e trilha offline.</div>
+              </div>
+            </div>
+            <div class="card-foot" style="border-top:1px solid #232A36">
+              <span class="meta" style="color:#6B7484">Educação • v1.0.0 • 26.1 MB</span>
+              <button class="btn" style="background:#10B981;color:#04120B">Instalar</button>
+            </div>
+          </div>
+
+          <div class="card" style="background:#11151B;border:1px solid #232A36">
+            <div class="card-top">
+              <div class="app-icon" style="background:#d97706;color:#fff">S</div>
+              <div>
+                <div class="app-name">Savano Cine</div>
+                <div class="app-tag" style="color:#A1AAB8">Streaming local, addons Stremio, dual-áudio e legendas GPU.</div>
+              </div>
+            </div>
+            <div class="card-foot" style="border-top:1px solid #232A36">
+              <span class="meta" style="color:#6B7484">Entretenimento • v1.0.0 • 1.6 MB</span>
+              <button class="btn" style="background:#10B981;color:#04120B">Instalar</button>
+            </div>
+          </div>
+
+          <div class="tabs" style="border-top:1px solid #232A36">
+            <span style="color:#10B981">Explorar</span>
+            <span style="color:#6B7484">Ajustes</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- OPÇÃO D: STUDIO (PURE INK & IVORY) -->
+      <div>
+        <div class="col-title">
+          <strong>Opção D — Studio (Pure Ink &amp; Ivory)</strong>
+          <span class="badge studio">Proposta Studio</span>
+        </div>
+        <div class="phone studio">
+          <div class="header">
+            <div class="brand">
+              <!-- Cubo Selado adaptado ao Studio: Tampa #F8FAFC / #22C55E -->
+              <svg width="38" height="38" viewBox="0 0 64 64" fill="none">
+                <polygon points="32,10 51,20 32,30 13,20" fill="#F8FAFC" stroke="#050506" stroke-width="1.5"/>
+                <polygon points="13,20 32,30 32,52 13,42" fill="#18181D" stroke="#292930" stroke-width="1.5"/>
+                <polygon points="51,20 32,30 32,52 51,42" fill="#121215" stroke="#292930" stroke-width="1.5"/>
+                <path d="M22.5 15L41.5 25V38" stroke="#22C55E" stroke-width="3.2" stroke-linecap="round"/>
+                <path d="M26 30L19 26.5V31.5L26 35V40L19 36.5" stroke="#F8FAFC" stroke-width="2.4" stroke-linecap="round"/>
+              </svg>
+              <div>
+                <div class="brand-kicker" style="color:#9CA3AF">SAVANO</div>
+                <div class="brand-title" style="color:#F8FAFC">Savano Store</div>
+              </div>
+            </div>
+            <div class="actions">
+              <div class="dot" style="background:#22C55E"></div>
+              <div class="refresh" style="background:#121215;border:1px solid #292930;color:#F8FAFC">↻</div>
+            </div>
+          </div>
+
+          <div class="search" style="background:#121215;border:1px solid #292930;color:#71717A">Buscar aplicativo ou categoria...</div>
+          <div class="chips">
+            <span class="chip" style="background:#F8FAFC;border:1px solid #F8FAFC;color:#050506">Todos</span>
+            <span class="chip" style="background:#121215;border:1px solid #292930;color:#A1A1AA">Atualizações</span>
+            <span class="chip" style="background:#121215;border:1px solid #292930;color:#A1A1AA">Instalados</span>
+          </div>
+
+          <div class="sec-row">
+            <span class="sec-title" style="color:#F8FAFC">Catálogo</span>
+            <span class="sec-date">26 de nov. de 2026</span>
+          </div>
+
+          <div class="card" style="background:#121215;border:1px solid #232329">
+            <div class="card-top">
+              <div class="app-icon" style="background:#f3f4f6;color:#065f46">V</div>
+              <div>
+                <div class="app-name" style="color:#F8FAFC">Vocabulando</div>
+                <div class="app-tag" style="color:#A1A1AA">Baralho diário de vocabulário PT-BR, áudio nativo e trilha offline.</div>
+              </div>
+            </div>
+            <div class="card-foot" style="border-top:1px solid #232329">
+              <span class="meta" style="color:#71717A">Educação • v1.0.0 • 26.1 MB</span>
+              <button class="btn" style="background:#F8FAFC;color:#050506">Instalar</button>
+            </div>
+          </div>
+
+          <div class="card" style="background:#121215;border:1px solid #22C55E">
+            <div class="card-top">
+              <div class="app-icon" style="background:#d97706;color:#fff">S</div>
+              <div>
+                <div class="app-name" style="color:#F8FAFC">Savano Cine <span style="font-size:10px;color:#22C55E;font-weight:700;margin-left:4px">• UPDATE</span></div>
+                <div class="app-tag" style="color:#A1A1AA">Streaming local, addons Stremio, dual-áudio e legendas GPU.</div>
+              </div>
+            </div>
+            <div class="card-foot" style="border-top:1px solid #232329">
+              <span class="meta" style="color:#71717A">Entretenimento • v1.1.0 • 1.6 MB</span>
+              <button class="btn" style="background:#22C55E;color:#031409">Atualizar</button>
+            </div>
+          </div>
+
+          <div class="tabs" style="border-top:1px solid #232329">
+            <span style="color:#F8FAFC">Explorar</span>
+            <span style="color:#71717A">Ajustes</span>
+          </div>
+        </div>
+
+        <div class="palette-bar">
+          <span class="sw" style="background:#050506;color:#fff">#050506</span>
+          <span class="sw" style="background:#121215;color:#fff">#121215</span>
+          <span class="sw" style="background:#F8FAFC;color:#050506">#F8FAFC</span>
+          <span class="sw" style="background:#22C55E;color:#031409">#22C55E</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

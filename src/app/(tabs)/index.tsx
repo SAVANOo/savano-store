@@ -297,7 +297,7 @@ const styles = StyleSheet.create({
     gap: spacing.md,
   },
   kicker: {
-    color: colors.emerald,
+    color: colors.textSecondary,
     fontSize: 10,
     fontWeight: '700',
     letterSpacing: 1.5,
@@ -444,8 +444,8 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
   },
   filterChipActive: {
-    backgroundColor: colors.emeraldMuted,
-    borderColor: colors.emerald,
+    backgroundColor: colors.ivory,
+    borderColor: colors.ivory,
   },
   filterChipText: {
     color: colors.textSecondary,
@@ -453,7 +453,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   filterChipTextActive: {
-    color: colors.emerald,
+    color: '#050506',
   },
   section: {
     gap: spacing.md,
