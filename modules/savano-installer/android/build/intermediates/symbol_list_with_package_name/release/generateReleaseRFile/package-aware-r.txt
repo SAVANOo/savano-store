@@ -1,0 +1,2 @@
+com.savanostore.installer
+xml savano_file_paths
