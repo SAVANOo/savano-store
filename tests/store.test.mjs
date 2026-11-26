@@ -1,8 +1,10 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
 import { mergeManifestIntoCatalog } from '../scripts/publish-release.mjs';
+import { signCatalogContent, verifyCatalogContent } from '../scripts/sign-catalog.mjs';
 
 test('catalog/catalog.json possui entradas válidas para Vocabulando e Savano Cine', () => {
   const catalogPath = path.resolve('catalog/catalog.json');
@@ -18,6 +20,7 @@ test('catalog/catalog.json possui entradas válidas para Vocabulando e Savano Ci
   for (const app of catalog.apps) {
     assert.match(app.apkUrl, /^https:\/\//);
     assert.match(app.sha256, /^[a-f0-9]{64}$/);
+    assert.match(app.signerSha256, /^[a-f0-9]{64}$/);
     assert.ok(Number.isInteger(app.versionCode) && app.versionCode > 0);
     assert.ok(Number.isInteger(app.sizeBytes) && app.sizeBytes > 0);
   }
@@ -82,4 +85,18 @@ test('mergeManifestIntoCatalog bloqueia versionCode regressivo e sha256 inválid
       ),
     /sha256 inválido/
   );
+});
+
+test('signCatalogContent e verifyCatalogContent validam assinatura RSA-SHA256 e rejeitam adulteração', () => {
+  const { publicKey, privateKey } = crypto.generateKeyPairSync('rsa', {
+    modulusLength: 2048,
+    publicKeyEncoding: { type: 'spki', format: 'pem' },
+    privateKeyEncoding: { type: 'pkcs8', format: 'pem' },
+  });
+
+  const payload = JSON.stringify({ schemaVersion: 1, apps: [] });
+  const signature = signCatalogContent(payload, privateKey);
+
+  assert.equal(verifyCatalogContent(payload, signature, publicKey), true);
+  assert.equal(verifyCatalogContent(`${payload} `, signature, publicKey), false);
 });
