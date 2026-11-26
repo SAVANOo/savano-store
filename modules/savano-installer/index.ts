@@ -6,6 +6,11 @@ export interface InstalledAppInfo {
   versionName: string | null;
 }
 
+export interface DeviceCapabilities {
+  sdkInt: number;
+  supportedAbis: string[];
+}
+
 export interface DownloadProgressEvent {
   packageId: string;
   bytesDownloaded: number;
@@ -31,16 +36,23 @@ export interface ClearCacheResult {
 }
 
 interface NativeSavanoInstaller {
+  getDeviceCapabilities(): DeviceCapabilities;
+  verifyCatalogSignature(rawJson: string, signatureBase64: string, publicKeyPem: string): boolean;
   getInstalledApps(packageIds: string[]): Promise<Record<string, InstalledAppInfo>>;
   canRequestPackageInstalls(): boolean;
   openInstallPermissionSettings(): boolean;
+  openAppSettings(packageId: string): boolean;
   downloadAndVerifyApk(
     packageId: string,
     apkUrl: string,
-    expectedSha256: string
+    expectedSha256: string,
+    expectedSizeBytes: number,
+    expectedVersionCode: number,
+    expectedSignerSha256: string | null
   ): Promise<DownloadVerifyResult>;
   installApk(filePath: string): Promise<boolean>;
   openApp(packageId: string): boolean;
+  deleteCachedApk(packageId: string): Promise<boolean>;
   getApkCacheStats(): Promise<ApkCacheStats>;
   clearApkCache(): Promise<ClearCacheResult>;
   addListener?(eventName: string, listener: (event: DownloadProgressEvent) => void): EventSubscription;
@@ -49,6 +61,22 @@ interface NativeSavanoInstaller {
 const NativeModule = requireOptionalNativeModule<NativeSavanoInstaller>('SavanoInstaller');
 
 export const isNativeInstallerAvailable = NativeModule !== null;
+
+export function getDeviceCapabilities(): DeviceCapabilities {
+  if (!NativeModule) {
+    return { sdkInt: 0, supportedAbis: [] };
+  }
+  return NativeModule.getDeviceCapabilities();
+}
+
+export function verifyCatalogSignature(
+  rawJson: string,
+  signatureBase64: string,
+  publicKeyPem: string
+): boolean {
+  if (!NativeModule) return false;
+  return NativeModule.verifyCatalogSignature(rawJson, signatureBase64, publicKeyPem);
+}
 
 export function addDownloadProgressListener(
   listener: (event: DownloadProgressEvent) => void
@@ -82,15 +110,30 @@ export function openInstallPermissionSettings(): boolean {
   return NativeModule.openInstallPermissionSettings();
 }
 
+export function openAppSettings(packageId: string): boolean {
+  if (!NativeModule) return false;
+  return NativeModule.openAppSettings(packageId);
+}
+
 export async function downloadAndVerifyApk(
   packageId: string,
   apkUrl: string,
-  expectedSha256: string
+  expectedSha256: string,
+  expectedSizeBytes: number,
+  expectedVersionCode: number,
+  expectedSignerSha256?: string | null
 ): Promise<DownloadVerifyResult> {
   if (!NativeModule) {
     throw new Error('Módulo nativo SavanoInstaller disponível apenas no build Android nativo.');
   }
-  return NativeModule.downloadAndVerifyApk(packageId, apkUrl, expectedSha256);
+  return NativeModule.downloadAndVerifyApk(
+    packageId,
+    apkUrl,
+    expectedSha256,
+    expectedSizeBytes,
+    expectedVersionCode,
+    expectedSignerSha256 ?? null
+  );
 }
 
 export async function installApk(filePath: string): Promise<boolean> {
@@ -103,6 +146,11 @@ export async function installApk(filePath: string): Promise<boolean> {
 export function openApp(packageId: string): boolean {
   if (!NativeModule) return false;
   return NativeModule.openApp(packageId);
+}
+
+export async function deleteCachedApk(packageId: string): Promise<boolean> {
+  if (!NativeModule) return false;
+  return NativeModule.deleteCachedApk(packageId);
 }
 
 export async function getApkCacheStats(): Promise<ApkCacheStats> {
