@@ -16,6 +16,7 @@
       "apkUrl": "https://github.com/SAVANOo/vocabulando/releases/download/v1.0.0/vocabulando-v1.0.0-arm64-v8a.apk",
       "sizeBytes": 27350406,
       "sha256": "dff494a2fa9fed150ee20d1273ed48019080b3823f0f2f58c0819b870a0ce4e3",
+      "signerSha256": "bd5b77f948d656ec587f8c22718b579ed3ed0851f5addd2dc54ea9cb729d6054",
       "releasedAt": "2026-11-25T21:37:55Z",
       "minSdkVersion": 24,
       "changelog": [
@@ -38,6 +39,7 @@
       "apkUrl": "https://github.com/SAVANOo/savano-cine/releases/download/v1.0.0/savano-cine-1.0.0-arm64-v8a.apk",
       "sizeBytes": 1651471,
       "sha256": "77680a62c71622166f3da919561e7208644650012c19ddebd160d559c1dc1ac2",
+      "signerSha256": "c29d29511ed09c98f69c6a7d9fd668a3e42b9768160250242cd9eafafaeaebbb",
       "releasedAt": "2026-11-25T21:55:00Z",
       "minSdkVersion": 24,
       "changelog": [

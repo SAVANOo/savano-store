@@ -74,6 +74,9 @@ function validateEntry(entry) {
   if (!/^[a-fA-F0-9]{64}$/.test(entry.sha256)) {
     throw new Error(`sha256 inválido (esperado 64 caracteres hex): ${entry.sha256}`);
   }
+  if (entry.signerSha256 && !/^[a-fA-F0-9]{64}$/.test(entry.signerSha256)) {
+    throw new Error(`signerSha256 inválido (esperado 64 caracteres hex): ${entry.signerSha256}`);
+  }
   if (!Array.isArray(entry.changelog)) {
     throw new Error('changelog deve ser um array de strings');
   }
@@ -106,6 +109,13 @@ export function mergeManifestIntoCatalog(catalog, manifest, options = {}) {
     apkUrl: apkUrl || existing.apkUrl || '',
     sizeBytes: manifest.sizeBytes,
     sha256: String(manifest.sha256).toLowerCase(),
+    ...(options.signerSha256 || manifest.signerSha256 || existing.signerSha256
+      ? {
+          signerSha256: String(
+            options.signerSha256 || manifest.signerSha256 || existing.signerSha256
+          ).toLowerCase(),
+        }
+      : {}),
     releasedAt: manifest.releasedAt,
     ...(manifest.minSdkVersion || manifest.minSdk || existing.minSdkVersion
       ? { minSdkVersion: manifest.minSdkVersion || manifest.minSdk || existing.minSdkVersion }
@@ -181,6 +191,7 @@ function main() {
     description: args.description,
     category: args.category,
     iconUrl: args['icon-url'],
+    signerSha256: args['signer-sha256'],
   });
 
   fs.mkdirSync(path.dirname(catalogPath), { recursive: true });

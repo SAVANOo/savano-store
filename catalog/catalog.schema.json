@@ -88,6 +88,17 @@
           "type": "string",
           "pattern": "^[a-fA-F0-9]{64}$"
         },
+        "signerSha256": {
+          "type": "string",
+          "pattern": "^[a-fA-F0-9]{64}$"
+        },
+        "screenshots": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uri"
+          }
+        },
         "releasedAt": {
           "type": "string",
           "format": "date-time"

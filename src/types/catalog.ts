@@ -11,6 +11,8 @@ export interface CatalogAppEntry {
   apkUrl: string;
   sizeBytes: number;
   sha256: string;
+  signerSha256?: string;
+  screenshots?: string[];
   releasedAt: string;
   changelog: string[];
   minSdkVersion?: number;
