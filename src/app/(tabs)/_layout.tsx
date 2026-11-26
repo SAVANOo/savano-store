@@ -47,7 +47,7 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="updates"
         options={{
-          title: 'Atualizações',
+          title: 'Ajustes',
           tabBarBadge: pendingUpdatesCount > 0 ? pendingUpdatesCount : undefined,
           tabBarBadgeStyle: {
             backgroundColor: colors.gold,

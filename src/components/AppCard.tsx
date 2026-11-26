@@ -52,13 +52,6 @@ export function AppCard({
           <Text style={styles.tagline} numberOfLines={2}>
             {app.tagline}
           </Text>
-          <View style={styles.chipsRow}>
-            <Text style={styles.metaChip}>v{app.versionName}</Text>
-            <Text style={styles.dot}>•</Text>
-            <Text style={styles.metaChip}>{formatBytes(app.sizeBytes)}</Text>
-            <Text style={styles.dot}>•</Text>
-            <Text style={styles.metaChip}>{app.abi}</Text>
-          </View>
         </View>
       </View>
 
@@ -71,8 +64,10 @@ export function AppCard({
       ) : null}
 
       <View style={styles.footer}>
-        <Text style={styles.packageText} numberOfLines={1}>
-          {app.packageId}
+        <Text style={styles.metaLine} numberOfLines={1}>
+          {[app.category, `v${app.versionName}`, formatBytes(app.sizeBytes)]
+            .filter(Boolean)
+            .join(' • ')}
         </Text>
         <View style={styles.actionWrap}>
           <AppActionButton
@@ -179,10 +174,10 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: colors.border,
   },
-  packageText: {
+  metaLine: {
     color: colors.textMuted,
-    fontSize: 11,
-    fontFamily: 'monospace',
+    fontSize: 12,
+    fontWeight: '500',
     flex: 1,
   },
   actionWrap: {

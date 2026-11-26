@@ -1,5 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import {
+  ActivityIndicator,
+  Linking,
   Pressable,
   RefreshControl,
   ScrollView,
@@ -8,14 +10,20 @@ import {
   TextInput,
   View,
 } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import Constants from 'expo-constants';
 import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { AppCard } from '../../components/AppCard';
+import { SavanoLogoAnimated } from '../../components/SavanoLogoAnimated';
 import { useStore } from '../../context/StoreContext';
 import { colors, radii, spacing } from '../../theme/tokens';
 import { computeAppStatus, formatShortDate } from '../../utils/format';
 
 type FilterMode = 'all' | 'updates' | 'installed';
+
+const STORE_PACKAGE_ID = 'com.savanostore.app';
+const STORE_RELEASES_URL = 'https://github.com/SAVANOo/savano-store/releases/latest';
 
 export default function ExploreScreen() {
   const router = useRouter();
@@ -36,8 +44,15 @@ export default function ExploreScreen() {
   const [query, setQuery] = useState('');
   const [filterMode, setFilterMode] = useState<FilterMode>('all');
 
+  const storeSelfUpdate = useMemo(() => {
+    const entry = catalog?.apps.find((a) => a.packageId === STORE_PACKAGE_ID);
+    if (!entry) return null;
+    const currentVersionCode = Constants.expoConfig?.android?.versionCode ?? 1;
+    return entry.versionCode > currentVersionCode ? entry : null;
+  }, [catalog]);
+
   const filteredApps = useMemo(() => {
-    const apps = catalog?.apps ?? [];
+    const apps = (catalog?.apps ?? []).filter((a) => a.packageId !== STORE_PACKAGE_ID);
     const q = query.trim().toLowerCase();
 
     return apps.filter((app) => {
@@ -82,28 +97,61 @@ export default function ExploreScreen() {
       >
         <View style={styles.header}>
           <View style={styles.brandRow}>
-            <Text style={styles.kicker}>DISTRIBUIÇÃO PESSOAL</Text>
-            <View
-              style={[
-                styles.statusPill,
-                isOfflineFallback ? styles.statusOffline : styles.statusOnline,
-              ]}
-            >
-              <Text
+            <View style={styles.brandLeft}>
+              <SavanoLogoAnimated size={40} spinning={isRefreshing} />
+              <View>
+                <Text style={styles.kicker}>SAVANO</Text>
+                <Text style={styles.title}>Savano Store</Text>
+              </View>
+            </View>
+            <View style={styles.headerActions}>
+              <View
                 style={[
-                  styles.statusText,
-                  isOfflineFallback ? styles.statusOfflineText : styles.statusOnlineText,
+                  styles.statusDot,
+                  { backgroundColor: isOfflineFallback ? colors.gold : colors.emerald },
                 ]}
+              />
+              <Pressable
+                onPress={() => void refreshAll()}
+                disabled={isRefreshing}
+                accessibilityRole="button"
+                accessibilityLabel="Verificar atualizações do catálogo"
+                style={({ pressed }) => [styles.refreshBtn, pressed && styles.pressed]}
               >
-                {isOfflineFallback ? 'Cache local' : 'Sincronizado'}
-              </Text>
+                {isRefreshing ? (
+                  <ActivityIndicator size="small" color={colors.emerald} />
+                ) : (
+                  <Ionicons name="refresh" size={18} color={colors.textPrimary} />
+                )}
+              </Pressable>
             </View>
           </View>
-          <Text style={styles.title}>Savano Store</Text>
-          <Text style={styles.subtitle}>
-            Builds assinados com verificação SHA-256 e certificado antes da instalação.
-          </Text>
         </View>
+
+        {storeSelfUpdate ? (
+          <View style={styles.storeUpdateCard}>
+            <Text style={styles.storeUpdateTitle}>
+              Nova Savano Store v{storeSelfUpdate.versionName} disponível
+            </Text>
+            {storeSelfUpdate.changelog[0] ? (
+              <Text style={styles.storeUpdateDesc}>• {storeSelfUpdate.changelog[0]}</Text>
+            ) : null}
+            <View style={styles.storeUpdateActions}>
+              <Pressable
+                onPress={() => void triggerAppAction(storeSelfUpdate)}
+                style={styles.storeUpdateBtn}
+              >
+                <Text style={styles.storeUpdateBtnText}>Atualizar agora</Text>
+              </Pressable>
+              <Pressable
+                onPress={() => void Linking.openURL(STORE_RELEASES_URL)}
+                style={styles.storeUpdateLink}
+              >
+                <Text style={styles.storeUpdateLinkText}>Ver no GitHub</Text>
+              </Pressable>
+            </View>
+          </View>
+        ) : null}
 
         {lastInstallBanner ? (
           <View style={styles.successBanner}>
@@ -121,7 +169,7 @@ export default function ExploreScreen() {
         {syncError ? (
           <View style={styles.errorBanner}>
             <Text style={styles.errorBannerText} numberOfLines={2}>
-              Offline ou erro de rede: {syncError}
+              Usando cache local ({syncError})
             </Text>
             <Pressable
               onPress={() => void refreshAll()}
@@ -137,7 +185,7 @@ export default function ExploreScreen() {
           <TextInput
             value={query}
             onChangeText={setQuery}
-            placeholder="Buscar app, pacote ou categoria..."
+            placeholder="Buscar aplicativo ou categoria..."
             placeholderTextColor={colors.textMuted}
             accessibilityLabel="Buscar aplicativos no catálogo"
             style={styles.searchInput}
@@ -194,7 +242,7 @@ export default function ExploreScreen() {
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Catálogo</Text>
             {lastSyncedAt ? (
-              <Text style={styles.syncMeta}>Atualizado em {formatShortDate(lastSyncedAt)}</Text>
+              <Text style={styles.syncMeta}>{formatShortDate(lastSyncedAt)}</Text>
             ) : null}
           </View>
 
@@ -202,7 +250,7 @@ export default function ExploreScreen() {
             <View style={styles.emptyBox}>
               <Text style={styles.emptyTitle}>Nenhum aplicativo encontrado</Text>
               <Text style={styles.emptySub}>
-                Ajuste o filtro/busca ou puxe para sincronizar o catalog.json.
+                Ajuste o filtro/busca ou toque em atualizar no topo.
               </Text>
             </View>
           ) : (
@@ -236,53 +284,94 @@ const styles = StyleSheet.create({
     paddingBottom: spacing.xxl,
   },
   header: {
-    gap: 6,
+    gap: 4,
   },
   brandRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
   },
+  brandLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.md,
+  },
   kicker: {
     color: colors.emerald,
-    fontSize: 11,
+    fontSize: 10,
     fontWeight: '700',
-    letterSpacing: 1.4,
-  },
-  statusPill: {
-    paddingHorizontal: 10,
-    paddingVertical: 3,
-    borderRadius: radii.pill,
-    borderWidth: 1,
-  },
-  statusOnline: {
-    backgroundColor: colors.emeraldMuted,
-    borderColor: colors.emeraldDeep,
-  },
-  statusOffline: {
-    backgroundColor: colors.goldMuted,
-    borderColor: colors.gold,
-  },
-  statusText: {
-    fontSize: 11,
-    fontWeight: '600',
-  },
-  statusOnlineText: {
-    color: colors.emerald,
-  },
-  statusOfflineText: {
-    color: colors.goldSoft,
+    letterSpacing: 1.5,
   },
   title: {
     color: colors.textPrimary,
-    fontSize: 30,
+    fontSize: 24,
     fontWeight: '800',
-    letterSpacing: -0.6,
+    letterSpacing: -0.5,
   },
-  subtitle: {
-    color: colors.textSecondary,
+  headerActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+  },
+  statusDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+  },
+  refreshBtn: {
+    width: 38,
+    height: 38,
+    borderRadius: radii.pill,
+    backgroundColor: colors.surface,
+    borderWidth: 1,
+    borderColor: colors.borderStrong,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  pressed: {
+    opacity: 0.78,
+  },
+  storeUpdateCard: {
+    backgroundColor: colors.goldMuted,
+    borderWidth: 1,
+    borderColor: colors.gold,
+    borderRadius: radii.lg,
+    padding: spacing.md,
+    gap: 6,
+  },
+  storeUpdateTitle: {
+    color: colors.goldSoft,
     fontSize: 14,
-    lineHeight: 20,
+    fontWeight: '700',
+  },
+  storeUpdateDesc: {
+    color: colors.textPrimary,
+    fontSize: 12,
+  },
+  storeUpdateActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.md,
+    marginTop: 4,
+  },
+  storeUpdateBtn: {
+    backgroundColor: colors.gold,
+    borderRadius: radii.pill,
+    paddingHorizontal: spacing.md,
+    paddingVertical: 7,
+  },
+  storeUpdateBtnText: {
+    color: '#141002',
+    fontSize: 12,
+    fontWeight: '700',
+  },
+  storeUpdateLink: {
+    paddingVertical: 6,
+  },
+  storeUpdateLinkText: {
+    color: colors.textSecondary,
+    fontSize: 12,
+    textDecorationLine: 'underline',
   },
   successBanner: {
     backgroundColor: colors.emeraldMuted,

@@ -1,6 +1,5 @@
 import React, { useMemo, useState } from 'react';
 import {
-  ActivityIndicator,
   Alert,
   Pressable,
   ScrollView,
@@ -9,6 +8,7 @@ import {
   TextInput,
   View,
 } from 'react-native';
+import Constants from 'expo-constants';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { openInstallPermissionSettings } from '../../../modules/savano-installer';
 import { AppCard } from '../../components/AppCard';
@@ -22,14 +22,11 @@ export default function UpdatesAndConfigScreen() {
     catalogUrl,
     installedMap,
     downloads,
-    isRefreshing,
-    syncError,
     canInstallPackages,
     cacheStats,
     deviceCapabilities,
     installHistory,
     nativeAvailable,
-    refreshAll,
     triggerAppAction,
     updateCatalogUrl,
     resetUrlToDefault,
@@ -38,6 +35,8 @@ export default function UpdatesAndConfigScreen() {
 
   const [draftUrl, setDraftUrl] = useState<string | null>(null);
   const [savingUrl, setSavingUrl] = useState(false);
+  const [adminTaps, setAdminTaps] = useState(0);
+  const [adminUnlocked, setAdminUnlocked] = useState(__DEV__);
   const urlInput = draftUrl ?? catalogUrl;
 
   const pendingUpdates = useMemo(() => {
@@ -63,12 +62,24 @@ export default function UpdatesAndConfigScreen() {
     }
   };
 
+  const handleVersionTap = () => {
+    if (adminUnlocked) return;
+    const next = adminTaps + 1;
+    setAdminTaps(next);
+    if (next >= 5) {
+      setAdminUnlocked(true);
+      Alert.alert('Modo Admin ativo', 'Edição da URL do catálogo liberada.');
+    }
+  };
+
+  const appVersion = Constants.expoConfig?.version ?? '1.0.0';
+
   return (
     <SafeAreaView style={styles.safeArea} edges={['top']}>
       <ScrollView contentContainerStyle={styles.container}>
         <View style={styles.header}>
-          <Text style={styles.kicker}>MANUTENÇÃO & FONTE</Text>
-          <Text style={styles.title}>Atualizações e Config</Text>
+          <Text style={styles.kicker}>GERENCIAMENTO</Text>
+          <Text style={styles.title}>Ajustes &amp; Histórico</Text>
         </View>
 
         {nativeAvailable && !canInstallPackages ? (
@@ -90,36 +101,9 @@ export default function UpdatesAndConfigScreen() {
           </View>
         ) : null}
 
-        <View style={styles.card}>
-          <View style={styles.rowBetween}>
-            <View style={styles.colFlex}>
-              <Text style={styles.cardTitle}>Verificar atualizações</Text>
-              <Text style={styles.cardSub}>
-                {pendingUpdates.length > 0
-                  ? `${pendingUpdates.length} app(s) com nova versão disponível`
-                  : 'Todos os aplicativos verificados estão em dia'}
-              </Text>
-            </View>
-            <Pressable
-              onPress={() => void refreshAll()}
-              disabled={isRefreshing}
-              style={({ pressed }) => [styles.emeraldBtn, pressed && styles.pressed]}
-            >
-              {isRefreshing ? (
-                <ActivityIndicator size="small" color="#04120B" />
-              ) : (
-                <Text style={styles.emeraldBtnText}>Verificar</Text>
-              )}
-            </Pressable>
-          </View>
-          {syncError ? (
-            <Text style={styles.errorText}>Última sincronização falhou: {syncError}</Text>
-          ) : null}
-        </View>
-
         {pendingUpdates.length > 0 ? (
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Pendentes</Text>
+            <Text style={styles.sectionTitle}>Atualizações Pendentes</Text>
             {pendingUpdates.map((app) => (
               <AppCard
                 key={app.packageId}
@@ -132,43 +116,6 @@ export default function UpdatesAndConfigScreen() {
             ))}
           </View>
         ) : null}
-
-        <View style={styles.card}>
-          <Text style={styles.cardTitle}>URL do Catálogo (catalog.json)</Text>
-          <Text style={styles.cardSub}>
-            Aponte para seu GitHub Pages, GitHub Raw ou servidor próprio.
-          </Text>
-          <TextInput
-            value={urlInput}
-            onChangeText={setDraftUrl}
-            placeholder="https://.../catalog.json"
-            placeholderTextColor={colors.textMuted}
-            autoCapitalize="none"
-            autoCorrect={false}
-            keyboardType="url"
-            style={styles.input}
-          />
-          <View style={styles.btnRow}>
-            <Pressable
-              onPress={() => void onSaveUrl()}
-              disabled={savingUrl}
-              style={({ pressed }) => [styles.emeraldBtn, styles.flexBtn, pressed && styles.pressed]}
-            >
-              <Text style={styles.emeraldBtnText}>
-                {savingUrl ? 'Salvando...' : 'Salvar e Sincronizar'}
-              </Text>
-            </Pressable>
-            <Pressable
-              onPress={() => {
-                setDraftUrl(null);
-                void resetUrlToDefault();
-              }}
-              style={({ pressed }) => [styles.ghostBtn, pressed && styles.pressed]}
-            >
-              <Text style={styles.ghostBtnText}>Padrão</Text>
-            </Pressable>
-          </View>
-        </View>
 
         <View style={styles.card}>
           <View style={styles.rowBetween}>
@@ -188,7 +135,7 @@ export default function UpdatesAndConfigScreen() {
         </View>
 
         <View style={styles.card}>
-          <Text style={styles.cardTitle}>Saúde & Diagnóstico</Text>
+          <Text style={styles.cardTitle}>Saúde &amp; Diagnóstico</Text>
           <Text style={styles.cardSub}>
             SDK Android: {deviceCapabilities.sdkInt > 0 ? `API ${deviceCapabilities.sdkInt}` : 'Web / Expo Go'}
           </Text>
@@ -210,6 +157,49 @@ export default function UpdatesAndConfigScreen() {
             ))}
           </View>
         ) : null}
+
+        {adminUnlocked ? (
+          <View style={styles.card}>
+            <Text style={styles.cardTitle}>Modo Admin — URL do Catálogo</Text>
+            <Text style={styles.cardSub}>
+              Altere apenas para homologação ou servidor alternativo HTTPS.
+            </Text>
+            <TextInput
+              value={urlInput}
+              onChangeText={setDraftUrl}
+              placeholder="https://.../catalog.json"
+              placeholderTextColor={colors.textMuted}
+              autoCapitalize="none"
+              autoCorrect={false}
+              keyboardType="url"
+              style={styles.input}
+            />
+            <View style={styles.btnRow}>
+              <Pressable
+                onPress={() => void onSaveUrl()}
+                disabled={savingUrl}
+                style={({ pressed }) => [styles.emeraldBtn, styles.flexBtn, pressed && styles.pressed]}
+              >
+                <Text style={styles.emeraldBtnText}>
+                  {savingUrl ? 'Salvando...' : 'Salvar e Sincronizar'}
+                </Text>
+              </Pressable>
+              <Pressable
+                onPress={() => {
+                  setDraftUrl(null);
+                  void resetUrlToDefault();
+                }}
+                style={({ pressed }) => [styles.ghostBtn, pressed && styles.pressed]}
+              >
+                <Text style={styles.ghostBtnText}>Padrão</Text>
+              </Pressable>
+            </View>
+          </View>
+        ) : null}
+
+        <Pressable onPress={handleVersionTap} style={styles.versionFooter}>
+          <Text style={styles.versionText}>Savano Store v{appVersion}</Text>
+        </Pressable>
       </ScrollView>
     </SafeAreaView>
   );
@@ -294,10 +284,6 @@ const styles = StyleSheet.create({
     fontSize: 13,
     lineHeight: 18,
   },
-  errorText: {
-    color: colors.danger,
-    fontSize: 12,
-  },
   input: {
     backgroundColor: colors.bg,
     borderWidth: 1,
@@ -372,5 +358,13 @@ const styles = StyleSheet.create({
   },
   pressed: {
     opacity: 0.82,
+  },
+  versionFooter: {
+    alignItems: 'center',
+    paddingVertical: spacing.md,
+  },
+  versionText: {
+    color: colors.textMuted,
+    fontSize: 12,
   },
 });
