@@ -1,29 +1,29 @@
 {
   "schemaVersion": 1,
   "storeName": "Savano Store",
-  "updatedAt": "2026-11-25T22:02:00Z",
+  "updatedAt": "2026-11-28T03:13:48.656Z",
   "apps": [
     {
       "packageId": "app.vocabulando",
       "name": "Vocabulando",
-      "tagline": "Baralho diário de vocabulário PT-BR, áudio nativo e trilha de aprendizado offline.",
+      "tagline": "Domine novas palavras todos os dias Ã¢â‚¬â€ 100% offline",
       "description": "Aplicativo de estudo lexical com baralho diário de 10 cards, áudio PT-BR, card 3D, trilha interligada por unidades, persistência offline em SQLite, busca no dicionário e widget Android.",
       "category": "Educação",
       "iconUrl": "https://raw.githubusercontent.com/SAVANOo/vocabulando/main/apps/mobile/assets/logo.png",
-      "versionName": "1.0.0",
-      "versionCode": 1,
+      "versionName": "1.0.1",
+      "versionCode": 2,
       "abi": "arm64-v8a",
-      "apkUrl": "https://github.com/SAVANOo/vocabulando/releases/download/v1.0.0/vocabulando-v1.0.0-arm64-v8a.apk",
-      "sizeBytes": 27350406,
-      "sha256": "dff494a2fa9fed150ee20d1273ed48019080b3823f0f2f58c0819b870a0ce4e3",
+      "apkUrl": "https://github.com/SAVANOo/vocabulando/releases/download/v1.0.1/vocabulando-v1.0.1-arm64-v8a.apk",
+      "sizeBytes": 28040321,
+      "sha256": "f93fc4328bd452e485659cfa82f690f572b53cdf177966e2ff3d353bbe683d01",
       "signerSha256": "bd5b77f948d656ec587f8c22718b579ed3ed0851f5addd2dc54ea9cb729d6054",
-      "releasedAt": "2026-11-25T21:37:55Z",
+      "releasedAt": "2026-11-28T03:05:16Z",
       "minSdkVersion": 24,
       "changelog": [
-        "Lançamento inicial v1.0.0 com baralho diário de 10 cards, áudio PT-BR e card 3D",
+        "LanÃƒÂ§amento inicial v1.0.0 com baralho diÃƒÂ¡rio de 10 cards, ÃƒÂ¡udio PT-BR e card 3D",
         "Trilha interligada por unidades ilustradas com bloqueio progressivo",
-        "Sessões em 4 etapas com barra de progresso, correção de erros e resumo de XP",
-        "Persistência offline em SQLite, busca no dicionário e widget Android"
+        "SessÃƒÂµes em 4 etapas com barra de progresso, correÃƒÂ§ÃƒÂ£o de erros e resumo de XP",
+        "PersistÃƒÂªncia offline em SQLite, busca no dicionÃƒÂ¡rio e widget Android"
       ]
     },
     {
