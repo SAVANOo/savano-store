@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
   "storeName": "Savano Store",
-  "updatedAt": "2026-11-28T03:13:48.656Z",
+  "updatedAt": "2026-11-28T03:17:39.892Z",
   "apps": [
     {
       "packageId": "app.vocabulando",
       "name": "Vocabulando",
-      "tagline": "Domine novas palavras todos os dias Ã¢â‚¬â€ 100% offline",
+      "tagline": "Domine novas palavras todos os dias — 100% offline",
       "description": "Aplicativo de estudo lexical com baralho diário de 10 cards, áudio PT-BR, card 3D, trilha interligada por unidades, persistência offline em SQLite, busca no dicionário e widget Android.",
       "category": "Educação",
       "iconUrl": "https://raw.githubusercontent.com/SAVANOo/vocabulando/main/apps/mobile/assets/logo.png",
@@ -17,13 +17,12 @@
       "sizeBytes": 28040321,
       "sha256": "f93fc4328bd452e485659cfa82f690f572b53cdf177966e2ff3d353bbe683d01",
       "signerSha256": "bd5b77f948d656ec587f8c22718b579ed3ed0851f5addd2dc54ea9cb729d6054",
-      "releasedAt": "2026-11-28T03:05:16Z",
+      "releasedAt": "2026-11-28T03:05:11Z",
       "minSdkVersion": 24,
       "changelog": [
-        "LanÃƒÂ§amento inicial v1.0.0 com baralho diÃƒÂ¡rio de 10 cards, ÃƒÂ¡udio PT-BR e card 3D",
-        "Trilha interligada por unidades ilustradas com bloqueio progressivo",
-        "SessÃƒÂµes em 4 etapas com barra de progresso, correÃƒÂ§ÃƒÂ£o de erros e resumo de XP",
-        "PersistÃƒÂªncia offline em SQLite, busca no dicionÃƒÂ¡rio e widget Android"
+        "Corrige crash na inicialização do build Release (R8 e carregamento offline)",
+        "Baralho diário de 10 cards com áudio PT-BR, card 3D e trilha conectada",
+        "Sessões em 4 etapas com correção de erros e widget Android"
       ]
     },
     {
