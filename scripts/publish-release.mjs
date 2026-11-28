@@ -66,6 +66,9 @@ function validateEntry(entry) {
   if (!/^https:\/\//i.test(entry.apkUrl)) {
     throw new Error(`apkUrl deve usar HTTPS: ${entry.apkUrl}`);
   }
+  if (!/^https:\/\//i.test(entry.iconUrl)) {
+    throw new Error(`iconUrl deve usar HTTPS: ${entry.iconUrl}`);
+  }
   if (!Number.isInteger(entry.versionCode) || entry.versionCode < 1) {
     throw new Error(`versionCode inválido: ${entry.versionCode}`);
   }

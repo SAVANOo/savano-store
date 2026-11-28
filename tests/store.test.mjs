@@ -85,6 +85,20 @@ test('mergeManifestIntoCatalog bloqueia versionCode regressivo e sha256 inválid
       ),
     /sha256 inválido/
   );
+
+  assert.throws(
+    () =>
+      mergeManifestIntoCatalog(
+        catalog,
+        {
+          ...catalog.apps[0],
+          versionCode: 2,
+          iconUrl: 'http://example.com/icon.png',
+        },
+        {}
+      ),
+    /iconUrl deve usar HTTPS/
+  );
 });
 
 test('signCatalogContent e verifyCatalogContent validam assinatura RSA-SHA256 e rejeitam adulteração', () => {
